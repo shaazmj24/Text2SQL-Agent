@@ -5,7 +5,6 @@ CREATE TABLE users (
     email           VARCHAR(254) UNIQUE NOT NULL,
     country         TEXT,
     source          TEXT,                        -- how they found this product (google, referral, internet, etc)
-    plan            TEXT DEFAULT 'free',         -- free, basic, pro, 
     is_paying       BOOLEAN DEFAULT FALSE,
     is_active       BOOLEAN DEFAULT TRUE,
     created_at      TIMESTAMP DEFAULT NOW(),     -- when they signed up
@@ -28,7 +27,8 @@ CREATE TABLE orders (
 );
 
 
--- subscriptions table
+-- subscriptions table  
+-- one to one (subscrip per user)
 CREATE TABLE subscrip (
     id              SERIAL PRIMARY KEY,
     user_id         INTEGER REFERENCES users(id),   -- whose subscription this is
@@ -43,7 +43,8 @@ CREATE TABLE subscrip (
 );
 
 
--- events table
+-- events table  
+-- one to many (user can have many events)
 CREATE TABLE events (
     id          SERIAL PRIMARY KEY,
     user_id     INTEGER REFERENCES users(id),
@@ -51,5 +52,6 @@ CREATE TABLE events (
     page        TEXT,
     created_at  TIMESTAMP DEFAULT NOW()
 );
+
 
 

@@ -1,1 +1,86 @@
-op
+ai-analytics-copilot/
+│
+├── backend/
+│   ├── fake_database/
+│   │   ├── schema.sql                  # Table definitions (users, orders, subscriptions, events)
+│   │   ├── seed.py                     # Script to populate fake data (use Faker library)
+│   │   └── migrations/                 # Any schema changes over time
+│   │
+│   ├── semantic_layer/                 #no all metrix definition in one file. inefficient to modify (have to scroll)
+│   │   ├── metrics/
+│   │   │   ├── revenue.yaml            # revenue, MRR, ARR definitions
+│   │   │   ├── growth.yaml             # growth rate definitions
+│   │   │   ├── users.yaml              # DAU, MAU, churn definitions
+│   │   │   └── orders.yaml             # order volume, AOV definitions
+│   │   └── loader.py                   # Reads and parses all YAML files into python object (dictionary)
+│   │
+│   ├── agent/
+│   │   ├── graph.py                    # LangGraph graph definition (the brain)
+│   │   ├── nodes/
+│   │   │   ├── intent_parser.py        # Extracts metric + time + comparison from question
+│   │   │   ├── metric_resolver.py      # Matches intent to semantic layer YAML
+│   │   │   ├── clarifier.py            # Handles vague queries, asks follow-up
+│   │   │   ├── sql_generator.py        # LLM generates SQL using metric definition
+│   │   │   ├── sql_validator.py        # Blocks DELETE/DROP, checks allowed tables
+│   │   │   ├── sql_executor.py         # Runs SQL against PostgreSQL
+│   │   │   ├── self_healer.py          # Feeds error back to LLM, retries
+│   │   │   └── response_builder.py     # Generates plain English + chart data
+│   │   └── state.py                    # LangGraph state schema (shared across nodes)
+│   │
+│   ├── api/
+│   │   ├── routes/
+│   │   │   ├── query.py                # POST /query — main endpoint
+│   │   │   ├── metrics.py              # GET /metrics — list available metrics
+│   │   │   └── health.py               # GET /health — sanity check
+│   │   └── main.py                     # FastAPI app entry point
+│   │
+│   ├── evaluation/
+│   │   ├── golden_dataset.json         # 50 questions + correct SQL pairs
+│   │   └── evaluator.py               # Runs all 50, calculates accuracy score
+│   │
+│   ├── db/
+│   │   └── connection.py              # PostgreSQL connection pool (SQLAlchemy)
+│   │
+│   ├── tests/
+│   │   ├── test_sql_validator.py
+│   │   ├── test_intent_parser.py
+│   │   └── test_self_healer.py
+│   │
+│   ├── requirements.txt
+│   └── Dockerfile
+│
+├── frontend/
+│   ├── src/
+│   │   ├── app/                        # Next.js app router
+│   │   │   └── page.tsx                # Main page
+│   │   ├── components/
+│   │   │   ├── ChatInput.tsx           # Question input box
+│   │   │   ├── ResponseCard.tsx        # Shows explanation + metric used
+│   │   │   ├── SQLViewer.tsx           # Displays generated SQL (collapsible)
+│   │   │   ├── ChartDisplay.tsx        # Renders bar/line chart from results
+│   │   │   ├── ClarificationPrompt.tsx # Shows "Did you mean X or Y?" UI
+│   │   │   └── MetricBadge.tsx         # Shows which metric definition was used
+│   │   ├── lib/
+│   │   │   └── api.ts                  # All fetch calls to your FastAPI backend
+│   │   └── types/
+│   │       └── index.ts                # TypeScript types matching your API responses
+│   │
+│   ├── public/
+│   ├── package.json
+│   ├── tailwind.config.ts
+│   └── Dockerfile
+│
+├── docker-compose.yml                  # Spins up backend + frontend + postgres together
+├── .env                                # API keys, DB URL (never commit this)
+├── .env.example                        # Safe template to commit (no real values)
+├── .gitignore
+└── README.md
+
+
+
+
+
+
+
+
+
