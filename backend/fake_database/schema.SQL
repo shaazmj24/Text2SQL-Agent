@@ -4,7 +4,8 @@ CREATE TABLE users (
     name            TEXT NOT NULL,
     email           VARCHAR(254) UNIQUE NOT NULL,
     country         TEXT,
-    source          TEXT,                        -- how they found this product (google, referral, internet, etc)
+    source          TEXT,  
+    plan            TEXT DEFAULT 'free',                      -- how they found this product (google, referral, internet, etc)
     is_paying       BOOLEAN DEFAULT FALSE,
     is_active       BOOLEAN DEFAULT TRUE,
     created_at      TIMESTAMP DEFAULT NOW(),     -- when they signed up
@@ -26,7 +27,6 @@ CREATE TABLE orders (
     created_at      TIMESTAMP DEFAULT NOW()
 );
 
-
 -- subscriptions table  
 -- one to one (subscrip per user)
 CREATE TABLE subscrip (
@@ -35,11 +35,12 @@ CREATE TABLE subscrip (
     plan_type       TEXT,                            -- free, pro_monthly, enterprise_annual
     price           DECIMAL(10,2),                  -- what they pay per cycle
     currency        TEXT DEFAULT 'USD',
-    sub_status      TEXT DEFAULT 'active',           -- active, cancelled, expired
+    sub_status      TEXT DEFAULT 'active',           -- active, cancelled
     auto_renew      BOOLEAN DEFAULT TRUE,            -- most users leave this on
     started_at      TIMESTAMP DEFAULT NOW(),
     ends_at         TIMESTAMP,                       -- calculated when inserted
-    updated_at      TIMESTAMP DEFAULT NOW()          -- changes on upgrade/downgrade/cancel
+    updated_at      TIMESTAMP DEFAULT NOW(),          -- changes on upgrade/downgrade/cancel 
+    cancelled_at    TIMESTAMP
 );
 
 
