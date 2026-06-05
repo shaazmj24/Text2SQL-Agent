@@ -83,7 +83,7 @@ def season_multiplier(month):
 source_plan_weights = {
     'referral':   {'free': 20, 'pro_monthly': 60, 'enterprise_annual': 20},            #more likely to pay . trust friend/family 
     'direct':     {'free': 25, 'pro_monthly': 55, 'enterprise_annual': 20},
-    'youtube':    {'free': 68, 'pro_monthly': 27, 'enterprise_annual': 5},
+    'youtube':    {'free': 68, 'pro_monthly': 27 , 'enterprise_annual': 5},
     'social_media':  {'free': 70, 'pro_monthly': 25, 'enterprise_annual': 5},
     'google':     {'free': 60, 'pro_monthly': 35, 'enterprise_annual': 5}
 }

@@ -1,0 +1,200 @@
+schema_context:
+  database_purpose: >
+    This database represents a SaaS analytics product. It tracks users,
+    their subscriptions, their purchases, and their product activity events.
+
+  tables:
+
+    users:
+      description: >
+        Stores one row per registered user. Use this table for questions about
+        signups, customers, countries, acquisition sources, current user plan,
+        paying status, and active status.
+
+      primary_key: id
+
+      columns:
+        id: Unique user ID.
+        country: Country where the user is located.
+        source: Marketing or acquisition channel that brought the user to the product.
+        plan: Current plan shown on the user profile.
+        is_paying: Whether the user is currently paying.
+        is_active: Whether the user recently used the product.
+        created_at: Date and time when the user signed up.
+        last_seen_at: Last date and time when the user was active.
+
+      use_when:
+        - User asks about total users or customers.
+        - User asks about signups or new users.
+        - User asks about users by country.
+        - User asks about users by acquisition source.
+        - User asks about paying users.
+        - User asks about active users.
+
+      do_not_use_when:
+        - User asks about revenue, sales, refunds, or purchases. Use orders instead.
+        - User asks about churn or subscription cancellation. Use subscriptions instead.
+        - User asks about product activity or page usage. Use events instead.
+
+      example_questions:
+        - How many users signed up in May?
+        - How many users are from Canada?
+        - Which source brought the most users?
+        - How many active users do we have?
+        - How many paying users do we have?
+        - Show users by plan.
+        - Show signups by month.
+        - What percentage of users are active?
+
+
+    orders:
+      description: >
+        Stores purchases made by users. One user can have many orders.
+        Use this table for revenue, sales, purchases, refunds, average order value,
+        and payment related questions.
+
+      primary_key: id
+
+      foreign_keys:
+        user_id: users.id
+
+      columns:
+        id: Unique order ID.
+        user_id: ID of the user who made the purchase.
+        plan_type: Plan that was purchased in this order.
+        price: Amount paid for the order.
+        currency: Currency used for payment.
+        order_status: Status of the payment, such as completed, failed, or pending.
+        is_refunded: Whether this order was refunded.
+        refunded_at: Date and time when the order was refunded.
+        created_at: Date and time when the order happened.
+
+      use_when:
+        - User asks about revenue.
+        - User asks about sales.
+        - User asks about purchases.
+        - User asks about refunds.
+        - User asks about average order value.
+        - User asks about paid orders.
+        - User asks about revenue by country, source, plan, or month.
+
+      do_not_use_when:
+        - User asks about user signups. Use users instead.
+        - User asks about product activity. Use events instead.
+        - User asks about churn rate or subscription cancellation. Use subscriptions instead.
+        - User asks about current active subscribers. Use subscriptions instead.
+
+      example_questions:
+        - What was revenue in May?
+        - What was total revenue this year?
+        - Show monthly revenue.
+        - Show revenue by country.
+        - Show revenue by acquisition source.
+        - What is the average order value?
+        - How many orders were refunded?
+        - What percentage of orders were refunded?
+        - Which plan generated the most revenue?
+        - What were total sales in Canada?
+
+
+    subscriptions:
+      description: >
+        Stores subscription status information for users. Use this table for
+        questions about active subscriptions, cancelled subscriptions, churn,
+        auto-renewal, subscription plans, and subscription lifecycle.
+
+      primary_key: user_id
+
+      foreign_keys:
+        user_id: users.id
+
+      columns:
+        user_id: ID of the user who owns the subscription.
+        plan_type: Subscription plan type.
+        price: Recurring subscription price.
+        currency: Currency used for the subscription.
+        sub_status: Current subscription status, such as active, cancelled, expired, or trial.
+        auto_renew: Whether the subscription will renew automatically.
+        started_at: Date and time when the subscription started.
+        ends_at: Date and time when the subscription ends.
+        updated_at: Date and time when the subscription record was last updated.
+        cancelled_at: Date and time when the subscription was cancelled.
+
+      use_when:
+        - User asks about churn.
+        - User asks about churn rate.
+        - User asks about cancelled subscriptions.
+        - User asks about active subscribers.
+        - User asks about subscription plans.
+        - User asks about auto-renewal.
+        - User asks which plan has more churn.
+        - User asks which source has more churn.
+
+      do_not_use_when:
+        - User asks about signups or new users. Use users instead.
+        - User asks about revenue or sales. Use orders instead.
+        - User asks about product activity or page visits. Use events instead.
+
+      example_questions:
+        - What is the churn rate this month?
+        - How many subscriptions were cancelled in May?
+        - How many active subscribers do we have?
+        - Which plan has the highest churn?
+        - Which source has the highest churn?
+        - How many users have auto-renew enabled?
+        - Show active subscribers by plan.
+        - Show cancelled subscriptions by month.
+        - How many subscriptions are ending this month?
+
+
+    events:
+      description: >
+        Stores user actions performed inside the product. One user can have many
+        events. Use this table for product usage, engagement, page visits,
+        feature usage, daily active users, and user behavior questions.
+
+      primary_key: id
+
+      foreign_keys:
+        user_id: users.id
+
+      columns:
+        id: Unique event ID.
+        user_id: ID of the user who performed the event.
+        event_type: Type of action performed by the user, such as login, page_view, click, or upgrade.
+        page: Product page where the event happened.
+        created_at: Date and time when the event happened.
+
+      use_when:
+        - User asks about product activity.
+        - User asks about user engagement.
+        - User asks about page visits.
+        - User asks about most used pages.
+        - User asks about feature usage.
+        - User asks about daily active users based on events.
+        - User asks what users are doing inside the product.
+
+      do_not_use_when:
+        - User asks about revenue or sales. Use orders instead.
+        - User asks about subscription churn. Use subscriptions instead.
+        - User asks about user signup counts. Use users instead.
+
+      example_questions:
+        - How many events happened today?
+        - What is the most visited page?
+        - Show daily active users.
+        - Which event type happens the most?
+        - How many users logged in this week?
+        - Show product activity by day.
+        - Which page has the most activity?
+        - How many upgrade clicks happened this month? 
+
+
+
+
+
+
+
+
+
+

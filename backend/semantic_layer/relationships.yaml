@@ -1,0 +1,80 @@
+relationships:
+
+  users_to_orders:
+    join_condition: orders.user_id = users.id
+
+    relationship_type: one_to_many
+
+    meaning: >
+      A user can make multiple purchases over time.
+      Each order belongs to exactly one user.
+
+    when_to_join:
+      - Revenue by country
+      - Revenue by acquisition source
+      - Revenue by user plan
+      - Average order value by country
+      - Revenue from paying users
+      - Sales grouped by user attributes
+
+    examples:
+      - What was revenue by country?
+      - Which acquisition source generated the most revenue?
+      - What was revenue from Canadian users?
+      - What is the average order value by plan?
+
+
+  users_to_subscriptions:
+    join_condition: subscriptions.user_id = users.id
+
+    relationship_type: one_to_one
+
+    meaning: >
+      Stores subscription information for each user,
+      including plan, status, renewal settings,
+      and cancellation information.
+
+    when_to_join:
+      - Churn by country
+      - Churn by acquisition source
+      - Active subscribers by country
+      - Subscription plan analysis
+      - Cancellation analysis by user segment
+
+    examples:
+      - Which country has the highest churn rate?
+      - Which acquisition source has the most cancelled subscriptions?
+      - How many active subscribers are from Canada?
+      - Which plan has the highest churn?
+
+
+  users_to_events:
+    join_condition: events.user_id = users.id
+
+    relationship_type: one_to_many
+
+    meaning: >
+      A user can perform many actions inside the product.
+      Events track user behavior and engagement.
+
+    when_to_join:
+      - Product activity by country
+      - Product activity by acquisition source
+      - Daily active users by country
+      - Feature usage by plan
+      - Page visits by user segment
+
+    examples:
+      - Which country generates the most product activity?
+      - Which acquisition source produces the most engaged users?
+      - What pages are most visited by Pro users?
+      - How many active users came from Google? 
+
+  join_rules:
+  - Never invent joins not listed in this file.
+  - Always use the specified join_condition.
+  - Do not join tables unless required by the question.
+  - If multiple joins seem possible, use the join defined here.
+  - If a required join is missing, ask for clarification.
+
+
