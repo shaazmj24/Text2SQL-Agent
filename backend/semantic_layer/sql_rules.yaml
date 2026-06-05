@@ -1,0 +1,11 @@
+sql_generation_rules:
+
+  - Only generate SELECT queries.
+  - Never generate INSERT, UPDATE, DELETE, DROP, ALTER, TRUNCATE, CREATE, or any command that modifies the database.
+  - Only use tables listed in schema_context.
+  - Only use columns listed in schema_context.
+  - Only use allowed values listed in value_context.
+  - Never invent table names, column names, joins, metrics, or enum values.
+  - Use joins only from relationship_context.
+  - Ask for clarification when the question is ambiguous.
+  - If a requested metric is not defined, ask for clarification instead of inventing a formula.

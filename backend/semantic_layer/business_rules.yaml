@@ -1,0 +1,41 @@
+business_rules:
+
+  revenue:
+    description: >
+      Revenue includes only paid,
+      non-refunded orders.
+
+  paying_user:
+    description: >
+      User where is_paying = true.
+
+  active_user:
+    description: >
+      User where is_active = true.
+
+  churned_subscription:
+    description: >
+      Subscription with status = cancelled.
+
+  enterprise_customer:
+    description: >
+      User with plan = enterprise_annual. 
+  
+plan_definitions:
+
+  free:
+    billing_period_days: 0
+    is_paid: false
+    billing_type: none
+
+  pro_monthly:
+    billing_period_days: 30
+    is_paid: true
+    billing_type: monthly
+
+  enterprise_annual:
+    billing_period_days: 365
+    is_paid: true
+    billing_type: annual
+
+

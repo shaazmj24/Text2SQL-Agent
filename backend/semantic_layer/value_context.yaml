@@ -1,0 +1,57 @@
+allowed_values:
+
+  users.source:
+    description: How the user discovered or entered the product.
+    values:
+      referral: User came from another user or referral link.
+      direct: User came directly to the website.
+      youtube: User came from YouTube marketing.
+      social_media: User came from social media.
+      google: User came from Google search or ads.
+
+  users.plan:
+    description: Current plan shown on the user's profile.
+    values:
+      free: Free user with no paid subscription.
+      pro_monthly: Paid monthly Pro plan.
+      enterprise_annual: Paid annual Enterprise plan.
+
+  orders.order_status:
+    description: Payment status of an order.
+    values:
+      completed: Payment succeeded.
+      cancelled: Payment was cancelled.
+      pending: Payment has not completed yet.
+
+  orders.plan_type:
+    description: Plan purchased in the order.
+    values:
+      pro_monthly: Monthly Pro purchase.
+      enterprise_annual: Annual Enterprise purchase.
+
+  subscriptions.sub_status:
+    description: Current subscription state.
+    values:
+      active: Subscription is currently active.
+      cancelled: Subscription was cancelled.
+
+  subscriptions.plan_type:
+    description: Plan attached to the subscription.
+    values:
+      free: Free plan.
+      pro_monthly: Monthly Pro subscription.
+      enterprise_annual: Annual Enterprise subscription.
+
+  events.event_type:
+    description: Type of product action performed by the user.
+    values:
+      login: User logged into the product.
+      view_dashboard: User viewed dashboard.
+      view_report: User viewed report page.
+      run_query: User ran an analytics query.
+      export_csv: User exported data as CSV.
+      invite_team_member: User invited another team member.
+      upgrade_clicked: User clicked upgrade button.
+
+
+

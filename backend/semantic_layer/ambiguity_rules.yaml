@@ -1,0 +1,42 @@
+ambiguity_rules:
+
+  customers:
+    ambiguous_because: >
+      Customer can mean all registered users or only paying users.
+    clarification: >
+      Ask whether the user means all registered users or only paying users.
+
+  active_users:
+    default_definition: users.is_active = true
+    alternative_definition: >
+      Users with at least one event in a specific time period.
+    clarification: >
+      If the user asks for daily active users, weekly active users, monthly active users,
+      or event-based activity, use the events table instead of users.is_active.
+
+  revenue:
+    default_definition: >
+      Revenue means completed, non-refunded orders.
+    ambiguous_because: >
+      Revenue can mean gross revenue, net revenue, refunded revenue,
+      recurring revenue, or revenue growth.
+    clarification: >
+      If the user asks a vague question like "how much money did we make",
+      "how much did we grow", or "show revenue growth" without specifying the type,
+      ask whether they mean gross revenue, net revenue, refunded revenue, recurring revenue,
+      or revenue growth.
+
+  churn:
+    default_definition: >
+      Churn means subscriptions where sub_status = cancelled.
+    clarification: >
+      If the user asks for churn rate, use cancelled subscriptions divided by total relevant subscriptions.
+      If the time period is missing, ask for the time period.
+
+  plan:
+    ambiguous_because: >
+      Plan can refer to users.plan, orders.plan_type, or subscriptions.plan_type.
+    clarification: >
+      For revenue questions, use orders.plan_type.
+      For churn or subscriber questions, use subscriptions.plan_type.
+      For user profile questions, use users.plan.

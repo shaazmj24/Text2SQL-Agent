@@ -97,7 +97,7 @@ schema_context:
         - What were total sales in Canada?
 
 
-    subscriptions:
+    subscrip:
       description: >
         Stores subscription status information for users. Use this table for
         questions about active subscriptions, cancelled subscriptions, churn,
