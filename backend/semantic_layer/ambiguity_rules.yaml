@@ -1,4 +1,7 @@
-ambiguity_rules:
+ambiguity_rules: 
+
+  non-valid question: 
+     if the question is not related to database and is very random then write non valid question 
 
   customers:
     ambiguous_because: >
@@ -22,7 +25,7 @@ ambiguity_rules:
       recurring revenue, or revenue growth.
     clarification: >
       If the user asks a vague question like "how much money did we make",
-      "how much did we grow", or "show revenue growth" without specifying the type,
+      "how much did we grow", or "show revenue growth" or "sales" without specifying the type,
       ask whether they mean gross revenue, net revenue, refunded revenue, recurring revenue,
       or revenue growth.
 
@@ -40,3 +43,4 @@ ambiguity_rules:
       For revenue questions, use orders.plan_type.
       For churn or subscriber questions, use subscriptions.plan_type.
       For user profile questions, use users.plan.
+  

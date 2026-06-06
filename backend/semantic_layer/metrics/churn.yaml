@@ -1,0 +1,182 @@
+metric_family: churn
+
+description: >
+  Churn metrics are calculated from the subscrip table.
+  Churn should never be calculated from users, orders, or events.
+
+source_table: subscrip
+
+default_date_column: subscrip.cancelled_at
+
+required_columns:
+  - subscrip.user_id
+  - subscrip.sub_status
+  - subscrip.plan_type
+  - subscrip.started_at
+  - subscrip.cancelled_at
+
+metrics:
+
+  churned_subscriptions:
+    description: >
+      Number of subscriptions cancelled during a selected period.
+
+    formula: COUNT(subscrip.user_id)
+
+    sql_expression: COUNT(subscrip.user_id)
+
+    filters:
+      - subscrip.sub_status = 'cancelled'
+
+    use_when:
+      - User asks how many subscriptions churned.
+      - User asks how many subscriptions were cancelled.
+      - User asks how many customers left.
+
+  cancelled_subscriptions:
+    description: >
+      Alias for churned_subscriptions.
+
+    formula: COUNT(subscrip.user_id)
+
+    sql_expression: COUNT(subscrip.user_id)
+
+    filters:
+      - subscrip.sub_status = 'cancelled'
+
+  active_subscriptions:
+    description: >
+      Number of currently active subscriptions.
+
+    formula: COUNT(subscrip.user_id)
+
+    sql_expression: COUNT(subscrip.user_id)
+
+    filters:
+      - subscrip.sub_status = 'active'
+
+    use_when:
+      - User asks for active subscriptions.
+      - User asks for active subscribers.
+      - User asks how many subscribers we currently have.
+
+  churn_rate:
+    description: >
+      Percentage of subscriptions that churned during a selected period.
+
+    formula: >
+      cancelled_subscriptions_during_period /
+      active_subscriptions_at_start_of_period * 100
+
+    numerator:
+      description: >
+        Number of subscriptions cancelled during the selected period.
+
+      filters:
+        - subscrip.sub_status = 'cancelled'
+
+    denominator:
+      description: >
+        Number of active subscriptions at the beginning of the selected period.
+
+      rule: >
+        Count subscriptions that were active before the start of the selected period.
+
+    use_when:
+      - User asks for churn rate.
+      - User asks what percentage of subscribers left.
+      - User asks which plan has the highest churn rate.
+      - User asks which acquisition source has the highest churn rate.
+
+    example:
+      - 20 subscriptions cancelled during May
+      - 200 subscriptions active on May 1
+      - churn_rate = 20 / 200 * 100 = 10%
+
+allowed_breakdowns:
+
+  by_subscription_fields:
+    - subscrip.plan_type
+    - subscrip.sub_status
+    - subscrip.auto_renew
+
+  by_user_fields_requires_join_users:
+    join: subscrip.user_id = users.id
+
+    fields:
+      - users.country
+      - users.source
+      - users.plan
+
+allowed_filters:
+
+  plan_filter:
+    column: subscrip.plan_type
+
+    allowed_values:
+      - free
+      - pro_monthly
+      - enterprise_annual
+
+  status_filter:
+    column: subscrip.sub_status
+
+    allowed_values:
+      - active
+      - cancelled
+
+  country_filter:
+    requires_join: users
+    column: users.country
+
+  source_filter:
+    requires_join: users
+    column: users.source
+
+do_not_use:
+  - Do not calculate churn from users table.
+  - Do not calculate churn from orders table.
+  - Do not calculate churn from events table.
+  - Never invent a churn formula.
+  - Always use the churn_rate formula defined in this file.
+  - Do not use total subscriptions as the denominator for churn_rate.
+  - Do not use cancelled subscriptions as the denominator for churn_rate.
+
+example_questions:
+
+  churned_subscriptions:
+    - How many subscriptions churned last month?
+    - How many customers cancelled in May?
+    - How many subscriptions were cancelled this quarter?
+
+  active_subscriptions:
+    - How many active subscribers do we have?
+    - Show active subscriptions by plan.
+    - Active subscribers by country.
+
+  churn_rate:
+    - What was churn rate last month?
+    - Show monthly churn rate.
+    - Which plan has the highest churn rate?
+    - Which acquisition source has the highest churn?
+    - What was churn rate in May?
+
+metric_rules:
+
+  churn_rate:
+    authoritative_definition: >
+      cancelled_subscriptions_during_period /
+      active_subscriptions_at_start_of_period * 100
+
+    instruction: >
+      Always use this definition when calculating churn rate.
+      Never invent an alternative churn formula. 
+  
+
+
+
+
+
+
+
+

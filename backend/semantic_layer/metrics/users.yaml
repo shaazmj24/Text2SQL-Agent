@@ -1,0 +1,139 @@
+metric_family: users
+
+description: >
+  User metrics are calculated from the users table.
+  User metrics should never be calculated from orders, subscrip, or events
+  unless explicitly stated.
+
+source_table: users
+
+default_date_column: users.created_at
+
+required_columns:
+  - users.id
+  - users.country
+  - users.source
+  - users.plan
+  - users.is_paying
+  - users.is_active
+  - users.created_at
+  - users.last_seen_at
+
+metrics:
+
+  total_users:
+    description: >
+      Total number of registered users.
+
+    formula: COUNT(users.id)
+
+    sql_expression: COUNT(users.id)
+
+    use_when:
+      - User asks how many users exist.
+      - User asks how many customers exist.
+      - User asks total users.
+
+  signups:
+    description: >
+      Number of users who signed up during a selected period.
+
+    formula: COUNT(users.id)
+
+    sql_expression: COUNT(users.id)
+
+    date_column: users.created_at
+
+    use_when:
+      - User asks about signups.
+      - User asks about new users.
+      - User asks user growth.
+
+  paying_users:
+    description: >
+      Number of users currently paying.
+
+    formula: COUNT(users.id)
+
+    sql_expression: COUNT(users.id)
+
+    filters:
+      - users.is_paying = true
+
+    use_when:
+      - User asks about paying users.
+      - User asks about paid customers.
+      - User asks about subscribers.
+
+  active_users:
+    description: >
+      Number of users currently marked as active.
+
+    formula: COUNT(users.id)
+
+    sql_expression: COUNT(users.id)
+
+    filters:
+      - users.is_active = true
+
+    use_when:
+      - User asks about active users.
+      - User asks about engaged users.
+      - User asks about currently active customers.
+
+allowed_breakdowns:
+
+  by_user_fields:
+    - users.country
+    - users.source
+    - users.plan
+    - users.is_paying
+    - users.is_active
+
+allowed_filters:
+
+  country_filter:
+    column: users.country
+
+  source_filter:
+    column: users.source
+
+  plan_filter:
+    column: users.plan
+
+    allowed_values:
+      - free
+      - pro_monthly
+      - enterprise_annual
+
+do_not_use:
+  - Do not calculate users from orders table.
+  - Do not calculate users from subscrip table.
+  - Do not calculate users from events table.
+  - Never invent a user metric formula.
+  - Use users.created_at for signup calculations.
+  - Use users.is_paying for paying user calculations.
+  - Use users.is_active for active user calculations.
+
+example_questions:
+
+  total_users:
+    - How many users do we have?
+    - What is our total user count?
+    - Total customers.
+
+  signups:
+    - How many users signed up in May?
+    - Show monthly signups.
+    - New users last month.
+    - User growth by month.
+
+  paying_users:
+    - How many paying users do we have?
+    - Show paying users by country.
+    - Which source has the most paying users?
+
+  active_users:
+    - How many active users do we have?
+    - Show active users by country.
+    - Which plan has the most active users?

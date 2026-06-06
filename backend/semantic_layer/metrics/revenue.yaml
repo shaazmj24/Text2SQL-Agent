@@ -1,0 +1,178 @@
+metric_family: revenue
+
+description: >
+  Revenue metrics are calculated from the orders table.
+  Revenue should never be calculated from users or subscriptions or events.
+
+source_table: orders
+
+default_date_column: orders.created_at
+
+required_columns:
+  - orders.price
+  - orders.order_status
+  - orders.is_refunded
+  - orders.created_at
+
+default_metric: net_revenue
+
+metrics:
+
+  gross_revenue:
+    description: >
+      Total value of all completed orders before subtracting refunds. 
+      Refunded completed orders are still included.
+    formula: SUM(orders.price)
+    sql_expression: SUM(orders.price)
+    filters:
+      - orders.order_status = 'completed'
+    use_when:
+      - User asks for gross revenue.
+      - User asks for total completed sales before refunds.
+
+  net_revenue:
+    description: >
+      Revenue from completed orders after excluding refunded orders.
+      This is the default meaning of revenue.
+    formula: SUM(orders.price) where completed and not refunded
+    sql_expression: SUM(orders.price)
+    filters:
+      - orders.order_status = 'completed'
+      - orders.is_refunded = false
+    use_when:
+      - User asks for revenue.
+      - User asks how much money we made.
+      - User asks for sales unless they specifically ask for gross sales.
+
+  refunded_revenue:
+    description: >
+      Total value of completed orders that were later refunded.
+    formula: SUM(orders.price) where completed and refunded
+    sql_expression: SUM(orders.price)
+    filters:
+      - orders.order_status = 'completed'
+      - orders.is_refunded = true
+    use_when:
+      - User asks for refunded revenue.
+      - User asks how much money was refunded.
+      - User asks refund amount.
+
+  average_order_value:
+    description: >
+      Average amount paid per completed, non-refunded order.
+    formula: net_revenue / number_of_completed_non_refunded_orders
+    sql_expression: AVG(orders.price)
+    filters:
+      - orders.order_status = 'completed'
+      - orders.is_refunded = false
+    use_when:
+      - User asks for average order value.
+      - User asks for AOV.
+      - User asks average purchase amount.
+
+allowed_breakdowns:
+  by_time:
+    day: DATE_TRUNC('day', orders.created_at)
+    week: DATE_TRUNC('week', orders.created_at)
+    month: DATE_TRUNC('month', orders.created_at)
+    year: DATE_TRUNC('year', orders.created_at)
+
+  by_order_fields:
+    - orders.plan_type
+    - orders.order_status
+
+  by_user_fields_requires_join_users:
+    join: orders.user_id = users.id
+    fields:
+      - users.country
+      - users.source
+      - users.plan
+      - users.is_paying
+      - users.is_active
+
+allowed_filters:
+  time_filter:
+    column: orders.created_at
+
+  plan_filter:
+    column: orders.plan_type
+    allowed_values:
+      - pro_monthly
+      - enterprise_annual
+
+  country_filter:
+    requires_join: users
+    column: users.country
+
+  source_filter:
+    requires_join: users
+    column: users.source
+
+do_not_use:
+  - Do not use users.is_paying to calculate revenue.
+  - Do not use subscriptions.price to calculate revenue.
+  - Do not use events to calculate revenue.
+  - Do not include cancelled or pending orders in revenue.
+  - Do not include refunded orders in net_revenue.
+
+example_questions:
+
+  net_revenue:
+    - What was revenue in May?
+    - How much money did we make last month?
+    - Which plan generated the most revenue?
+
+  gross_revenue:
+    - What was gross revenue in May?
+    - Show revenue before refunds.
+    - Total completed sales before refunds.
+
+  refunded_revenue:
+    - How much revenue was refunded?
+    - What was refunded revenue last month?
+    - Show refund amount by month.
+
+  average_order_value:
+    - What is the average order value?
+    - What is AOV by plan?
+    - Average purchase amount by country.
+
+sql_examples:
+
+  net_revenue_total:
+    question: What was revenue in May 2025?
+    sql: |
+      SELECT
+        SUM(orders.price) AS net_revenue
+      FROM orders
+      WHERE orders.order_status = 'completed'
+        AND orders.is_refunded = false
+        AND orders.created_at >= DATE '2025-05-01'
+        AND orders.created_at < DATE '2025-06-01';
+
+  net_revenue_by_month:
+    question: Show monthly revenue.
+    sql: |
+      SELECT
+        DATE_TRUNC('month', orders.created_at) AS month,
+        SUM(orders.price) AS net_revenue
+      FROM orders
+      WHERE orders.order_status = 'completed'
+        AND orders.is_refunded = false
+      GROUP BY month
+      ORDER BY month;
+
+  net_revenue_by_country:
+    question: Show revenue by country.
+    sql: |
+      SELECT
+        users.country,
+        SUM(orders.price) AS net_revenue
+      FROM orders
+      JOIN users ON orders.user_id = users.id
+      WHERE orders.order_status = 'completed'
+        AND orders.is_refunded = false
+      GROUP BY users.country
+      ORDER BY net_revenue DESC;
+
+
