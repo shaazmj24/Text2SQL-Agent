@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
+
+# macOS
+.DS_Store
+
+# PostgreSQL / local files
+*.db
+
+# VS Code
+.vscode/
+
+# logs
+*.log
+
