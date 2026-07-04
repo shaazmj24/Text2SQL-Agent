@@ -3,9 +3,12 @@ import os
 from google import genai 
 import time
 
-load_dotenv()  
-#print(os.getenv("gemini_api_key"))     , how is this allowed 
-client = genai.Client(api_key=os.getenv("gemini_api_key")) 
+load_dotenv()   
+api_k = os.getenv("gemini_api_key") 
+
+if not api_k:  
+    raise ValueError("Api key not found")
+client = genai.Client(api_key=api_k) 
 
 def ask_gemini(prompt: str) -> dict: 
     for _ in range(3):
@@ -18,11 +21,8 @@ def ask_gemini(prompt: str) -> dict:
 
         except Exception as e:
             print("Retrying...")
-            time.sleep(5)
+            time.sleep(4)
 
     raise Exception("Gemini unavailable")
-
-
-
 
 

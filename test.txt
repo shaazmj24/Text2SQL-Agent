@@ -78,9 +78,127 @@ ai-analytics-copilot/
 
 
 
+---------------------------------------------------------------
+---------------------------------------------------------------
+how to create routers: 
+---------------------------------------------------------------
+---------------------------------------------------------------
+
+Without APIRouter
+
+Everything is in one file.
+
+# main.py
+
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def home():
+    return {"message": "Home"}
+
+@app.get("/users")
+def get_users():
+    return ["John", "Alice"]
+
+@app.post("/users")
+def create_user():
+    return {"status": "created"}
+
+@app.get("/orders")
+def get_orders():
+    return ["Pizza", "Burger"]
+
+@app.post("/orders")
+def create_order():
+    return {"status": "order created"}
+
+Imagine having 100 endpoints.
+
+Your main.py becomes 1000+ lines.
+
+That's why routers exist.
+
+With APIRouter
+
+Now we separate files.
+
+project/
+
+main.py
+
+routers/
+    users.py
+    orders.py
+users.py
+from fastapi import APIRouter
+
+router = APIRouter()
+
+@router.get("/users")
+def get_users():
+    return ["John", "Alice"]
+
+@router.post("/users")
+def create_user():
+    return {"status": "created"}
+
+Notice:
+
+router = APIRouter()
+
+This is like making a mini FastAPI app.
+
+Instead of
+
+app.get(...)
+
+you use
+
+router.get(...)
+
+because this file doesn't own the whole application.
+
+It only owns the user endpoints.
+
+orders.py
+from fastapi import APIRouter
+
+router = APIRouter()
+
+@router.get("/orders")
+def get_orders():
+    return ["Pizza"]
+
+@router.post("/orders")
+def create_order():
+    return {"status": "created"}
+main.py
+from fastapi import FastAPI
+
+from routers.users import router as users_router
+from routers.orders import router as orders_router
+
+app = FastAPI()
+
+app.include_router(users_router)
+app.include_router(orders_router)
+
+That's literally all.
 
 
 
+-- benefits: 
+1. less merge conflicts 
+2. organized 
+3. less choas 
 
+
+---------------------------------------------------------------
+---------------------------------------------------------------
+
+---------------------------------------------------------------
+---------------------------------------------------------------
 
 
