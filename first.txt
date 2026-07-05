@@ -1,0 +1,26 @@
+User enters DB info in chatbot/settings page
+↓
+Frontend sends it to backend using HTTPS
+↓
+Backend validates it and tests connection
+↓
+Backend encrypts password
+↓
+Backend stores host, port, db name, username, encrypted password in your PostgreSQL/Supabase
+↓
+User asks a question
+↓
+Backend decrypts password temporarily
+↓
+Backend connects to user's database
+↓
+Backend reads schema: tables + columns + types
+↓
+LLM generates SQL using that schema
+↓
+Backend checks SQL is safe
+↓
+Backend runs SQL
+↓
+Backend returns answer
+

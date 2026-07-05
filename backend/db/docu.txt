@@ -1,0 +1,80 @@
+6. Database Connector Layer
+
+This is what makes the project feel real.
+
+Support:
+
+- PostgreSQL first
+- MySQL later
+- SQLite for demo mode
+- Snowflake/BigQuery as advanced extensions
+
+Connector responsibilities:
+
+- Test database connection
+- Introspect schema
+- Fetch tables, columns, types, foreign keys
+- Sample safe rows
+- Estimate table sizes
+- Store metadata
+- Execute read-only SQL
+
+Schema introspection example for Postgres:
+
+SELECT 
+  table_name,
+  column_name,
+  data_type
+FROM information_schema.columns
+WHERE table_schema = 'public';
+
+Foreign key introspection:
+
+SELECT
+  tc.table_name,
+  kcu.column_name,
+  ccu.table_name AS foreign_table_name,
+  ccu.column_name AS foreign_column_name
+FROM information_schema.table_constraints AS tc
+JOIN information_schema.key_column_usage AS kcu
+  ON tc.constraint_name = kcu.constraint_name
+JOIN information_schema.constraint_column_usage AS ccu
+  ON ccu.constraint_name = tc.constraint_name
+WHERE tc.constraint_type = 'FOREIGN KEY';
+7. Metadata Store
+
+Your app needs its own internal database.
+
+Use PostgreSQL.
+
+Tables:
+
+users
+organizations
+database_connections
+schema_tables
+schema_columns
+schema_relationships
+query_runs
+query_feedback
+saved_questions
+evaluation_cases
+agent_traces
+
+Example:
+
+CREATE TABLE query_runs (
+    id UUID PRIMARY KEY,
+    user_id UUID NOT NULL,
+    database_id UUID NOT NULL,
+    question TEXT NOT NULL,
+    generated_sql TEXT,
+    validated_sql TEXT,
+    status TEXT,
+    latency_ms INT,
+    row_count INT,
+    error_message TEXT,
+    created_at TIMESTAMP DEFAULT now()
+);
+
+This gives your project backend depth, not just AI wrapper depth.
